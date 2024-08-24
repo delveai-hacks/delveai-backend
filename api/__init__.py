@@ -22,7 +22,6 @@ from flask_migrate import Migrate
 from pathlib import Path
 
 # python txt2speech lib
-import pyttsx3
 from gtts import gTTS
 
 from io import BytesIO
@@ -57,8 +56,6 @@ def create_app():
         db.create_all()
     JWTManager(app)
     Migrate(app, db)
-
-    engine = pyttsx3.init()
 
     api = Api(app, title="Gemini Backend Sample", version=1.0)
 
