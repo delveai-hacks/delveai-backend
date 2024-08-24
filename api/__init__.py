@@ -137,7 +137,7 @@ def create_app():
 
             msg = EmailMessage()
             msg['Subject'] = 'Verify your email - DelveAI'
-            msg['From'] = 'fabowalemuhawwal@gmail.com'
+            msg['From'] = 'delveaigpt@gmail.com'
             msg['To'] = email
 
             msg.add_alternative(
@@ -169,7 +169,8 @@ def create_app():
                     </html>""".format(fullname, code), subtype='html')
 
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login('fabowalemuhawwal@gmail.com', 'avodrjybmysduuqo')
+                smtp.login('delveaigpt@gmail.com',
+                           '{}'.format(os.getenv('EMAIL_PASSWORD')))
                 smtp.send_message(msg)
 
             return save_user, HTTPStatus.CREATED
@@ -224,7 +225,7 @@ def create_app():
 
             msg = EmailMessage()
             msg['Subject'] = 'Verify your email - DelveAI'
-            msg['From'] = 'fabowalemuhawwal@gmail.com'
+            msg['From'] = 'delveaigpt@gmail.com'
             msg['To'] = email
 
             msg.add_alternative(
@@ -256,7 +257,8 @@ def create_app():
                     </html>""".format(user.fullname, code), subtype='html')
 
             with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-                smtp.login('fabowalemuhawwal@gmail.com', 'avodrjybmysduuqo')
+                smtp.login('delveaigpt@gmail.com',
+                           '{}'.format(os.getenv('EMAIL_PASSWORD')))
                 smtp.send_message(msg)
 
             return response, HTTPStatus.OK
