@@ -4,3 +4,6 @@
 .geminiui
 **.geminiui
 geminiui/
+.instance
+**.instance
+instance/

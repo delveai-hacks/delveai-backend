@@ -291,6 +291,29 @@ def create_app():
 
                 return response, HTTPStatus.FORBIDDEN
 
+    @auth_namespace.route('/change-password')
+    class ChangePassword(Resource):
+        @auth_namespace.expect(login_model)
+        def put(self):
+            '''
+                change user password
+            '''
+
+            data = request.get_json()
+            email = data['email']
+            password = generate_password_hash(data['password'])
+
+            user = User.query.filter_by(email=email).first()
+            user.password = password
+
+            db.session.commit()
+
+            response = {
+                "message": "Successfully changed {} password".format(user.fullname)
+            }
+
+            return response, HTTPStatus.OK
+
     @auth_namespace.route('/me')
     class GetUser(Resource):
         @auth_namespace.marshal_with(signup_model)
