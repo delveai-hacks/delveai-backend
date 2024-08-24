@@ -65,7 +65,7 @@ pypiwin32==223
 python-dotenv==1.0.1
 pyttsx3==2.90
 pytz==2024.1
-pywin32==306
+# pywin32==306
 referencing==0.34.0
 requests==2.31.0
 resend==2.2.0
