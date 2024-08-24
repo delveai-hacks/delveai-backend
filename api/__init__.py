@@ -119,11 +119,19 @@ def create_app():
             data = request.get_json()
             fullname = data['fullname']
             email = data['email']
-            password = generate_password_hash(data['password'])
+            password = data['password']
+
+            # Check if the user already exists by email or full name
+            existing_user = User.query.filter(
+                (User.email == email) | (User.fullname == fullname)).first()
+            if existing_user:
+                return {'message': 'User with this email or full name already exists'}, HTTPStatus.CONFLICT
+
+            hashed_password = generate_password_hash(password)
             code = str(random.randint(1000, 9999))
 
             save_user = User(
-                fullname=fullname, email=email, password=password, code=code)
+                fullname=fullname, email=email, password=hashed_password, code=code)
             print(code)
             save_user.save()
 
