@@ -75,13 +75,14 @@ def create_app():
 
                 return response, 401
 
-    @pdf_namespace.route('/pdf_summarize')
-    class PDFSummarize(Resource):
+    @pdf_namespace.route('/pdf_interaction')
+    class PDFInteraction(Resource):
         def post(self):
             '''
                 Route to extract text from pdf and request to AI
             '''
             uploaded_file = request.files['file']
+            user_data = request.form.get('text')
 
             if uploaded_file and uploaded_file.filename.endswith('.pdf'):
                 pdf_stream = BytesIO(uploaded_file.read())
@@ -91,16 +92,17 @@ def create_app():
                     if 'generateContent' in m.supported_generation_methods:
                         print(m.name)
 
-                print(f"Summarize: {extracted_text[:500]}")
+                print(f"{user_data}: {extracted_text[:500]}")
 
                 model = genai.GenerativeModel('gemini-pro')
                 text_length = len(extracted_text)
                 if text_length >= 20000:
                     response = model.generate_content(
-                        f"Summarize: {extracted_text[:20000]}")
+                        f"{user_data}: {extracted_text}")
+                    # f"{user_data}: {extracted_text[:20000]}")
                 else:
                     response = model.generate_content(
-                        f"Summarize: {extracted_text}")
+                        f"{user_data}: {extracted_text}")
                 to_markdown(response.text)
 
                 if response.text:
