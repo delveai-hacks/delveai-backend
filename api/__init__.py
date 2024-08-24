@@ -352,7 +352,7 @@ def create_app():
                 if 'generateContent' in m.supported_generation_methods:
                     print(m.name)
 
-            model = genai.GenerativeModel('gemini-pro')
+            model = genai.GenerativeModel('gemini-1.5-flash')
             response = model.generate_content(f"{user_input}")
             to_markdown(response.text)
 
@@ -430,7 +430,7 @@ def create_app():
 
                 print(f"{user_data}: {extracted_text[:500]}")
 
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash')
                 text_length = len(extracted_text)
                 if text_length >= 20000:
                     response = model.generate_content(
