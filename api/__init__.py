@@ -1,6 +1,5 @@
 import pathlib
 import random
-import resend
 from IPython.display import Markdown
 from IPython.display import display
 import os
@@ -27,6 +26,9 @@ from fpdf import FPDF
 from gtts import gTTS
 
 from io import BytesIO
+
+import smtplib
+from email.message import EmailMessage
 
 load_dotenv()
 
@@ -106,8 +108,6 @@ def create_app():
         'text': fields.String(description='User input text', required=True),
     })
 
-    resend.api_key = os.getenv('RESEND_API_KEY')
-
     @auth_namespace.route('/signup')
     class SignUp(Resource):
         @auth_namespace.expect(signup_model)
@@ -135,14 +135,42 @@ def create_app():
             print(code)
             save_user.save()
 
-            params: resend.Emails.SendParams = {
-                "from": "onboarding@resend.dev",
-                "to": [email],
-                "subject": "Verify your email",
-                "html": "<p>Hello {},</p><p>This is your verification code: {}</p> <p>Thank you, <br/>DelveAi Team.</p>".format(fullname, code),
-            }
+            msg = EmailMessage()
+            msg['Subject'] = 'Verify your email - DelveAI'
+            msg['From'] = 'fabowalemuhawwal@gmail.com'
+            msg['To'] = email
 
-            r = resend.Emails.send(params)
+            msg.add_alternative(
+                """<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Verify Your Email</title>
+                    </head>
+                    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+                        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                            <div style="text-align: center; padding-bottom: 20px; width: fit-content; height: fit-content; margin: 0 auto;">
+                                <img src="https://res.cloudinary.com/drxgewgtj/image/upload/v1722428529/bkop3hsybf0gwd0033nk.png" alt="DelveAi Logo" style="width: 130px; height: 32px;">
+                            </div>
+                            <div style="padding: 20px; text-align: center;">
+                                <h2 style="color: #333;">Email Verification</h2>
+                                <p style="color: #666;">Hello {},</p>
+                                <p style="color: #666;">Thank you for registering with DelveAi. Please use the verification code below to complete your email verification.</p>
+                                <p style="font-size: 24px; font-weight: bold; color: #333;">{}</p>
+                                <p style="color: #666;">If you did not register with DelveAi, please ignore this email.</p>
+                                <p style="color: #666;">Thank you, <br/>DelveAi Team</p>
+                            </div>
+                            <div style="text-align: center; padding-top: 20px;">
+                                <p style="font-size: 12px; color: #999;">&copy; 2024 DelveAi. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>""".format(fullname, code), subtype='html')
+
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                smtp.login('fabowalemuhawwal@gmail.com', 'avodrjybmysduuqo')
+                smtp.send_message(msg)
 
             return save_user, HTTPStatus.CREATED
 
@@ -194,14 +222,42 @@ def create_app():
                 "message": "user code sent to {}".format(email)
             }
 
-            params: resend.Emails.SendParams = {
-                "from": "onboarding@resend.dev",
-                "to": [email],
-                "subject": "Verify your email",
-                "html": "<p>Hello {},</p><p>This is your new verification code: {}</p> <p>Thank you, <br/>DelveAi Team.</p>".format(user.fullname, code),
-            }
+            msg = EmailMessage()
+            msg['Subject'] = 'Verify your email - DelveAI'
+            msg['From'] = 'fabowalemuhawwal@gmail.com'
+            msg['To'] = email
 
-            r = resend.Emails.send(params)
+            msg.add_alternative(
+                """<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Verify Your Email</title>
+                    </head>
+                    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+                        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                            <div style="text-align: center; padding-bottom: 20px; width: fit-content; height: fit-content; margin: 0 auto;">
+                                <img src="https://res.cloudinary.com/drxgewgtj/image/upload/v1722428529/bkop3hsybf0gwd0033nk.png" alt="DelveAi Logo" style="width: 130px; height: 32px;">
+                            </div>
+                            <div style="padding: 20px; text-align: center;">
+                                <h2 style="color: #333;">Email Verification</h2>
+                                <p style="color: #666;">Hello {},</p>
+                                <p style="color: #666;">Thank you for registering with DelveAi. Please use the verification code below to complete your email verification.</p>
+                                <p style="font-size: 24px; font-weight: bold; color: #333;">{}</p>
+                                <p style="color: #666;">If you did not register with DelveAi, please ignore this email.</p>
+                                <p style="color: #666;">Thank you, <br/>DelveAi Team</p>
+                            </div>
+                            <div style="text-align: center; padding-top: 20px;">
+                                <p style="font-size: 12px; color: #999;">&copy; 2024 DelveAi. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </body>
+                    </html>""".format(user.fullname, code), subtype='html')
+
+            with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+                smtp.login('fabowalemuhawwal@gmail.com', 'avodrjybmysduuqo')
+                smtp.send_message(msg)
 
             return response, HTTPStatus.OK
 
