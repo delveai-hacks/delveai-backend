@@ -21,6 +21,8 @@ from datetime import timedelta
 from flask_migrate import Migrate
 from pathlib import Path
 
+from fpdf import FPDF
+
 # python txt2speech lib
 from gtts import gTTS
 
@@ -225,6 +227,23 @@ def create_app():
 
                 return response, HTTPStatus.FORBIDDEN
 
+    @auth_namespace.route('/me')
+    class GetUser(Resource):
+        @auth_namespace.marshal_with(signup_model)
+        @jwt_required()
+        def get(self):
+            current_user = get_jwt_identity()
+            user = User.query.filter_by(email=current_user).first()
+
+            if user:
+                return user, HTTPStatus.OK
+            else:
+                response = {
+                    'message': "can't get the user identity"
+                }
+
+                return response, HTTPStatus.UNAUTHORIZED
+
     @auth_namespace.route('/refresh_token')
     class RefreshToken(Resource):
         @jwt_required(refresh=True)
@@ -286,6 +305,15 @@ def create_app():
         # Cross-platform way to get the Downloads folder
         return os.path.join(Path.home(), 'Downloads')
 
+    # PDF creation function
+    def create_pdf(text, filename):
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.set_font("Arial", size=12)
+        pdf.multi_cell(0, 10, text)
+        pdf.output(filename)
+
     @propmt_namespace.route('/save-audio')
     class DownloadTextToAudio(Resource):
         @propmt_namespace.expect(audio_model)
@@ -300,6 +328,22 @@ def create_app():
 
             tts = gTTS(text=text, lang='en')
             tts.save(filename)
+
+            return send_file(filename, as_attachment=True)
+
+    @propmt_namespace.route('/save-pdf')
+    class DownloadTextToPDF(Resource):
+        @propmt_namespace.expect(audio_model)
+        def post(self):
+            data = request.get_json()
+            text = data['text']
+
+            downloads_folder = get_downloads_folder()
+            if not os.path.exists(downloads_folder):
+                os.makedirs(downloads_folder)
+            filename = os.path.join(downloads_folder, "output.pdf")
+
+            create_pdf(text, filename)
 
             return send_file(filename, as_attachment=True)
 
