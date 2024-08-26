@@ -40,17 +40,17 @@ aws models import for connecting to models
 # from langchain.prompts import PromptTemplate
 # from langchain_community.chat_models import BedrockChat
 
-import boto3
-import json
+# import boto3
+# import json
 
 '''
 end aws models import for connecting to models
 '''
-os.environ["AWS_PROFILE"] = "delveai"
+# os.environ["AWS_PROFILE"] = "delveai"
 
 # bedrock client
-bedrock_runtime = boto3.client('bedrock-runtime', region_name="ca-central-1")
-modelID = "anthropic.claude-3-sonnet-20240229-v1:0"
+# bedrock_runtime = boto3.client('bedrock-runtime', region_name="ca-central-1")
+# modelID = "anthropic.claude-3-sonnet-20240229-v1:0"
 
 load_dotenv()
 
@@ -503,32 +503,32 @@ def create_app():
 
                     return response, 401
 
-    def delve_chatbot(language, freeform_text):
-        kwargs = {
-            "modelId": modelID,
-            "contentType": "application/json",
-            "accept": "application/json",
-            "body": json.dumps({
-                "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 1000,
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": [
-                            {
-                                "type": "text",
-                                "text": freeform_text,
-                            }
-                        ]
-                    }
-                ]
-            })
-        }
+    # def delve_chatbot(language, freeform_text):
+    #     kwargs = {
+    #         "modelId": modelID,
+    #         "contentType": "application/json",
+    #         "accept": "application/json",
+    #         "body": json.dumps({
+    #             "anthropic_version": "bedrock-2023-05-31",
+    #             "max_tokens": 1000,
+    #             "messages": [
+    #                 {
+    #                     "role": "user",
+    #                     "content": [
+    #                         {
+    #                             "type": "text",
+    #                             "text": freeform_text,
+    #                         }
+    #                     ]
+    #                 }
+    #             ]
+    #         })
+    #     }
 
-        response = bedrock_runtime.invoke_model(**kwargs)
-        body = json.loads(response['body'].read())
+    #     response = bedrock_runtime.invoke_model(**kwargs)
+    #     body = json.loads(response['body'].read())
 
-        print(body)
+    #     print(body)
 
     api.add_namespace(auth_namespace, path='/auth')
     api.add_namespace(propmt_namespace, path='/ai')
