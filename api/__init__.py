@@ -432,10 +432,13 @@ def create_app():
             data = request.get_json()
             text = data['text']
 
+            random_string = str(random.randint(1000, 9999))
+
             downloads_folder = get_downloads_folder()
             if not os.path.exists(downloads_folder):
                 os.makedirs(downloads_folder)
-            filename = os.path.join(downloads_folder, "output.mp3")
+            filename = os.path.join(
+                downloads_folder, "output_audio_fromdelve_{}.mp3".format(random_string))
 
             tts = gTTS(text=text, lang='en')
             tts.save(filename)
@@ -449,10 +452,13 @@ def create_app():
             data = request.get_json()
             text = data['text']
 
+            random_string = str(random.randint(1000, 9999))
+
             downloads_folder = get_downloads_folder()
             if not os.path.exists(downloads_folder):
                 os.makedirs(downloads_folder)
-            filename = os.path.join(downloads_folder, "output.pdf")
+            filename = os.path.join(
+                downloads_folder, "output_docs_fromdelve_{}.pdf".format(random_string))
 
             create_pdf(text, filename)
 
@@ -523,9 +529,6 @@ def create_app():
         body = json.loads(response['body'].read())
 
         print(body)
-
-    delve_chatbot(
-        "English", "write this in javascript: print('hello world') and provide the answer in Yoruba")
 
     api.add_namespace(auth_namespace, path='/auth')
     api.add_namespace(propmt_namespace, path='/ai')
