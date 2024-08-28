@@ -83,7 +83,7 @@ def create_app():
     JWTManager(app)
     Migrate(app, db)
 
-    api = Api(app, title="Gemini Backend Sample", version=1.0)
+    api = Api(app, title="DelveAI Backend", version=1.0)
 
     propmt_namespace = Namespace(
         'prompt', description='Namespace for prompting')
