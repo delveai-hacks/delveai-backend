@@ -434,16 +434,25 @@ def create_app():
 
             random_string = str(random.randint(1000, 9999))
 
-            downloads_folder = get_downloads_folder()
-            if not os.path.exists(downloads_folder):
-                os.makedirs(downloads_folder)
+            # Use a temporary directory for saving the audio file
+            storage_folder = "/tmp"
+
+            if not os.path.exists(storage_folder):
+                os.makedirs(storage_folder)
+
             filename = os.path.join(
-                downloads_folder, "output_audio_fromdelve_{}.mp3".format(random_string))
+                storage_folder, f"output_audio_fromdelve_{random_string}.mp3")
 
             tts = gTTS(text=text, lang='en')
             tts.save(filename)
 
-            return send_file(filename, as_attachment=True)
+            # Send the file to the client as an attachment, prompting download
+            return send_file(
+                filename,
+                as_attachment=True,
+                download_name=f"output_audio_fromdelve_{random_string}.mp3",
+                mimetype='audio/mpeg'
+            )
 
     @propmt_namespace.route('/save-pdf')
     class DownloadTextToPDF(Resource):
@@ -454,15 +463,23 @@ def create_app():
 
             random_string = str(random.randint(1000, 9999))
 
-            downloads_folder = get_downloads_folder()
-            if not os.path.exists(downloads_folder):
-                os.makedirs(downloads_folder)
+            storage_folder = "/tmp"
+
+            if not os.path.exists(storage_folder):
+                os.makedirs(storage_folder)
+
             filename = os.path.join(
-                downloads_folder, "output_docs_fromdelve_{}.pdf".format(random_string))
+                storage_folder, f"output_docs_fromdelve_{random_string}.pdf")
 
             create_pdf(text, filename)
 
-            return send_file(filename, as_attachment=True)
+            # Send the file to the client as an attachment, prompting download
+            return send_file(
+                filename,
+                as_attachment=True,
+                download_name=f"output_docs_fromdelve_{random_string}.pdf",
+                mimetype='application/pdf'
+            )
 
     @pdf_namespace.route('/pdf_interaction')
     class PDFInteraction(Resource):
